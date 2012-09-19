@@ -1,10 +1,17 @@
+# virtualenv
 /.Python
 /bin/*
-/include
-/lib
-/share
+/include/
+/lib/
+/share/
+
 !/bin/rss2jira
 
 *.db
 
 *.pyc
+
+# distutils
+/build/
+/dist/
+/MANIFEST
