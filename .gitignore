@@ -6,6 +6,7 @@
 /share/
 
 !/bin/rss2jira
+/rss2jira.conf
 
 *.db
 
