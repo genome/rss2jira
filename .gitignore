@@ -1,0 +1,10 @@
+/.Python
+/bin/*
+/include
+/lib
+/share
+!/bin/rss2jira
+
+*.db
+
+*.pyc

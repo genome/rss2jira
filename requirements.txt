@@ -1,0 +1,8 @@
+PyYAML==3.10
+feedparser==5.1.2
+ipython==0.13
+jira-python==0.12
+python-magic==0.4.2
+requests==0.14.0
+tlslite==0.4.1
+wsgiref==0.1.2

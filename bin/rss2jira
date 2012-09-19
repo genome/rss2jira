@@ -1,0 +1,25 @@
+#!/usr/bin/env python
+
+import argparse
+import logging
+import rss2jira
+
+parser = argparse.ArgumentParser(
+    prog='rss2jira',
+)
+parser.add_argument('-c', '--config', default='rss2jira.conf', help='config file')
+parser.add_argument('-d', '--debug', action='store_true', help='enable debug messages')
+parser.add_argument('-r', '--reset-db', action='store_true', help='reset the database')
+args = parser.parse_args()
+
+logging.basicConfig(
+    format='%(asctime)-15s %(levelname)s: %(message)s',
+)
+
+if args.debug:
+    logger = logging.getLogger()
+    logger.setLevel(logging.DEBUG)
+    logging.debug('Logging level set to debug.')
+
+r2j = rss2jira.RSS2JIRA(conf_path=args.config, reset_db=args.reset_db)
+r2j.loop()
