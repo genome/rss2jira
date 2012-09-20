@@ -14,4 +14,15 @@ setup(
     scripts=['bin/rss2jira'],
     package_data={'rss2jira': ['rss2jira.conf.example']},
     data_files=[('/etc', ['rss2jira.conf.example'])],
+    license='BSD',
+    keywords=['rss', 'jira', 'rss2jira'],
+    classifiers=[
+        'Development Status :: 2 - Pre-Alpha',
+        'Environment :: Console',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: BSD License',
+        'Operating System :: OS Independent',
+        'Programming Language :: Python :: 2.7',
+        'Topic :: Software Development :: Bug Tracking',
+    ],
 )
