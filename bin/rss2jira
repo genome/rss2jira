@@ -3,6 +3,34 @@
 import argparse
 import logging
 import rss2jira
+import sys
+
+
+class StreamToLogger(object):
+    """
+    Fake file-like stream object that redirects writes to a logger instance.
+    From: http://www.electricmonk.nl/log/2011/08/14/redirect-stdout-and-stderr-to-a-logger-in-python/
+    nnutter: Modified original to handle buffers not terminating in newlines.
+    """
+    def __init__(self, logger, log_level=logging.INFO):
+        self.logger = logger
+        self.log_level = log_level
+        self.linebuf = ''
+        self.buf = ''
+
+    def write(self, buf):
+        lines = buf.splitlines(True)
+
+        # Need to detect other types of newlines... universal newlines?
+        if lines[-1][-1] != '\n':
+            self.buf += lines.pop()
+
+        for i in range(len(lines)):
+            if self.buf:
+                self.logger.log(self.log_level, self.buf + lines[i].rstrip())
+                self.buf = ''
+            else:
+                self.logger.log(self.log_level, lines[i].rstrip())
 
 parser = argparse.ArgumentParser(
     prog='rss2jira',
@@ -10,16 +38,35 @@ parser = argparse.ArgumentParser(
 parser.add_argument('-c', '--config', default='rss2jira.conf', help='config file')
 parser.add_argument('-d', '--debug', action='store_true', help='enable debug messages')
 parser.add_argument('-r', '--reset-db', action='store_true', help='reset the database')
+parser.add_argument('-l', '--log', help='config file')
+parser.add_argument('--daemon', action='store_true', help='enable daemon mode')
 args = parser.parse_args()
 
-logging.basicConfig(
-    format='%(asctime)-15s %(levelname)s: %(message)s',
-)
+logger = logging.getLogger()
+formatter = logging.Formatter('%(asctime)-15s - %(name)s - %(levelname)s - %(message)s')
+
+if args.log:
+    if args.daemon:
+        fh = logging.FileHandler(args.log)
+    else:
+        fh = logging.TimedRotatingFileHandler(args.log, backupCount=5, when='d', interval=7)
+    fh.setFormatter(formatter)
+    logger.addHandler(fh)
+
+if args.daemon:
+    sys.stdout = StreamToLogger(logger, logging.INFO)
+    sys.stderr = StreamToLogger(logger, logging.ERROR)
+else:
+    ch = logging.StreamHandler()
+    ch.setFormatter(formatter)
+    logger.addHandler(ch)
 
 if args.debug:
-    logger = logging.getLogger()
     logger.setLevel(logging.DEBUG)
     logging.debug('Logging level set to debug.')
+
+if args.daemon:
+    logging.captureWarnings(True)
 
 r2j = rss2jira.RSS2JIRA(conf_path=args.config, reset_db=args.reset_db)
 r2j.loop()
