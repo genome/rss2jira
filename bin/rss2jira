@@ -2,6 +2,7 @@
 
 import argparse
 import logging
+import logging.handlers
 import rss2jira
 import sys
 
@@ -49,7 +50,7 @@ if args.log:
     if args.daemon:
         fh = logging.FileHandler(args.log)
     else:
-        fh = logging.TimedRotatingFileHandler(args.log, backupCount=5, when='d', interval=7)
+        fh = logging.handlers.TimedRotatingFileHandler(args.log, backupCount=5, when='d', interval=7)
     fh.setFormatter(formatter)
     logger.addHandler(fh)
 
