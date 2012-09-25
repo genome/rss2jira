@@ -19,6 +19,7 @@ class RSS2JIRA:
     # - Package.
 
     def __init__(self, conf_path='watcher.conf', reset_db=False):
+        self.logger = logging.getLogger('rss2jira')
         self.conf_path = conf_path
         self.expect_conf_path_is_secured()
         self.initialize_from_conf()
@@ -29,14 +30,14 @@ class RSS2JIRA:
         pass
 
     def initialize_from_conf(self):
-        logging.debug('Initializing configuration...')
+        self.logger.info('Initializing configuration...')
         conf_file = open(self.conf_path)
         self.conf = yaml.load(conf_file)
         conf_file.close()
         self.initialized_from_conf = True
 
     def initialize_sources_and_issuefactories(self):
-        logging.debug('Initializing sources...')
+        self.logger.info('Initializing sources...')
         self.source_sets = []
         for conf in self.conf['sources']:
             name = conf['name']
@@ -52,11 +53,11 @@ class RSS2JIRA:
             self.source_sets.append((name, source, issueFactory))
 
     def initialize_db(self, reset_db):
-        logging.debug('Initializing DB...')
+        self.logger.info('Initializing DB...')
         self.db = sqlite3.connect(self.conf['db_path'])
         db_cursor = self.db.cursor()
         if reset_db:
-            logging.debug('Reseting DB...')
+            self.logger.info('Reseting DB...')
             db_cursor.execute('DROP TABLE IF EXISTS entries')
         db_cursor.execute('''CREATE TABLE IF NOT EXISTS entries (source_name TEXT, id TEXT, PRIMARY KEY (source_name, id))''')
 
@@ -83,23 +84,22 @@ class RSS2JIRA:
     def loop(self):
         for source_set in self.source_sets:
             source_name, source, issueFactory = source_set[0], source_set[1], source_set[2]
-            logging.debug('Fetching entries for {}.'.format(source_name))
+            self.logger.info('Fetching entries for {}.'.format(source_name))
             source.fetch()
             for entry in source.entries:
                 if self.entry_is_tracked(source_name, entry):
-#                    logging.debug('Entry is tracked; next entry.')
+                    self.logger.debug('Entry is tracked; next entry.')
                     continue
                 if not self.entry_matches_keywords(entry):
-#                    logging.debug('Entry does not match keywords; next entry.')
+                    self.logger.debug('Entry does not match keywords; next entry.')
                     continue
-                logging.debug(entry.title)
-                logging.debug('Tracking new entry.')
+                self.logger.debug(entry.title)
+                self.logger.debug('Tracking new entry.')
                 issueFactory.fromEntry(entry)
                 self.set_entry_as_tracked(source_name, entry)
 
     def main(self, sleep=2):
 
         while True:
-            logging.debug('Loop.')
             self.loop()
             time.sleep(sleep)
