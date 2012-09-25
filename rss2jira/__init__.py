@@ -97,7 +97,7 @@ class RSS2JIRA:
                 issueFactory.fromEntry(entry)
                 self.set_entry_as_tracked(source_name, entry)
 
-    def main(self, sleep=2):
+    def main(self, sleep):
 
         while True:
             self.loop()

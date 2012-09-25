@@ -38,6 +38,7 @@ parser = argparse.ArgumentParser(
     prog='rss2jira',
 )
 parser.add_argument('-c', '--config', default='rss2jira.conf', help='config file')
+parser.add_argument('-s', '--sleep', default=900, help='sleep duration between RSS fetches')
 parser.add_argument('-d', '--debug', action='store_true', help='enable debug messages')
 parser.add_argument('-r', '--reset-db', action='store_true', help='reset the database')
 parser.add_argument('-l', '--log', help='config file')
@@ -74,4 +75,4 @@ if args.daemon:
     logging.captureWarnings(True)
 
 r2j = rss2jira.RSS2JIRA(conf_path=args.config, reset_db=args.reset_db)
-r2j.main()
+r2j.main(sleep=args.sleep)
