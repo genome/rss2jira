@@ -66,6 +66,9 @@ else:
 if args.debug:
     logger.setLevel(logging.DEBUG)
     logging.debug('Logging level set to debug.')
+else:
+    logger.setLevel(logging.INFO)
+    logging.info('Logging level set to info.')
 
 if args.daemon:
     logging.captureWarnings(True)
