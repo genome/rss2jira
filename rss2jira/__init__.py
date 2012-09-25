@@ -6,6 +6,7 @@ import yaml
 from rss2jira.source import Source
 from rss2jira.issueFactory import IssueFactory
 import re
+import time
 
 
 class RSS2JIRA:
@@ -96,6 +97,9 @@ class RSS2JIRA:
                 issueFactory.fromEntry(entry)
                 self.set_entry_as_tracked(source_name, entry)
 
-    def main(self):
-        while 1:
+    def main(self, sleep=2):
+
+        while True:
+            logging.debug('Loop.')
             self.loop()
+            time.sleep(sleep)
