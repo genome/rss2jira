@@ -4,16 +4,6 @@
 /include/
 /lib/
 /share/
-/*.egg-info
 
 !/bin/rss2jira
 /rss2jira.conf
-
-*.db
-
-*.pyc
-
-# distutils
-/build/
-/dist/
-/MANIFEST
