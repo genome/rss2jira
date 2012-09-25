@@ -12,11 +12,8 @@ import time
 class RSS2JIRA:
 
     # TODO:
-    # - Check content if it is available!
-    # - Close DB connection on destroy?
     # - Try-catch connection errors but only tolerate N failures without success?
-    # - Shutdown when signal received.
-    # - Package.
+    # - Shutdown when signal received?
 
     def __init__(self, conf_path='watcher.conf', reset_db=False):
         self.logger = logging.getLogger('rss2jira')
