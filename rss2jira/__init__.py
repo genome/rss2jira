@@ -77,8 +77,10 @@ class RSS2JIRA:
             return True
         if hasattr(entry, 'summary') and len(entry.summary) > 0 and re.match(pattern, entry.summary, re.IGNORECASE):
             return True
-#        if hasattr(entry, 'content') and len(entry.content) > 0 and re.match(pattern, entry.content, re.IGNORECASE):
-#            return True
+        if hasattr(entry, 'content'):
+            for content in entry.content:
+                if re.match(pattern, content['value'], re.IGNORECASE):
+                    return True
         return False
 
     def loop(self):
