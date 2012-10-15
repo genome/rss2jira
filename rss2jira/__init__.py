@@ -70,15 +70,7 @@ class RSS2JIRA:
     def entry_matches_keywords(self, entry):
         keywords = self.conf['keywords']
         pattern = '|'.join(keywords)
-        if hasattr(entry, 'title') and len(entry.title) > 0 and re.match(pattern, entry.title, re.IGNORECASE):
-            return True
-        if hasattr(entry, 'summary') and len(entry.summary) > 0 and re.match(pattern, entry.summary, re.IGNORECASE):
-            return True
-        if hasattr(entry, 'content'):
-            for content in entry.content:
-                if re.match(pattern, content['value'], re.IGNORECASE):
-                    return True
-        return False
+        return re.search(pattern, entry.__str__(), re.IGNORECASE)
 
     def loop(self):
         for source_set in self.source_sets:
