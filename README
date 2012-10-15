@@ -1,13 +1,3 @@
-for each rss source
-    get rss entries
-    for each rss entry
-        next unless entry is new
-        get sources JIRA project and issueType
-        call sources jira fields
-        create jira issue using fields
-        record entry is not new
+# rss2jira
 
-Source
-    BioStars
-    SEQanswers
-Tracker
+What's documentation? (Sorry)
