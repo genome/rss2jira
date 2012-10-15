@@ -96,4 +96,5 @@ class RSS2JIRA:
 
         while True:
             self.loop()
+            self.logger.debug('Going to sleep for {} seconds.'.format(sleep))
             time.sleep(sleep)
