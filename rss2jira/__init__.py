@@ -78,14 +78,17 @@ class RSS2JIRA:
             self.logger.info('Fetching entries for {}.'.format(source_name))
             source.fetch()
             for entry in source.entries:
+                if hasattr(entry, 'title') and len(entry.title) > 0:
+                    title = entry.title
+                else:
+                    title = 'No Title'
                 if self.entry_is_tracked(source_name, entry):
-                    self.logger.debug('Entry is tracked; next entry.')
+                    self.logger.debug('Entry is tracked; next entry. ({})'.format(title))
                     continue
                 if not self.entry_matches_keywords(entry):
-                    self.logger.debug('Entry does not match keywords; next entry.')
+                    self.logger.debug('Entry does not match keywords; next entry. ({})'.format(title))
                     continue
-                self.logger.debug(entry.title)
-                self.logger.debug('Tracking new entry.')
+                self.logger.debug('Tracking new entry. ({})'.format(title))
                 issueFactory.fromEntry(entry)
                 self.set_entry_as_tracked(source_name, entry)
 
