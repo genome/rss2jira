@@ -75,7 +75,7 @@ class RSS2JIRA:
     def loop(self):
         for source_set in self.source_sets:
             source_name, source, issueFactory = source_set[0], source_set[1], source_set[2]
-            self.logger.info('Fetching entries for {}.'.format(source_name))
+            self.logger.info('Fetching entries for {}.'.format(source_name.encode('ascii', 'replace')))
             source.fetch()
             for entry in source.entries:
                 if hasattr(entry, 'title') and len(entry.title) > 0:
@@ -83,12 +83,12 @@ class RSS2JIRA:
                 else:
                     title = 'No Title'
                 if self.entry_is_tracked(source_name, entry):
-                    self.logger.debug('Entry is tracked; next entry. ({})'.format(title))
+                    self.logger.debug('Entry is tracked; next entry. ({})'.format(title.encode('ascii', 'replace')))
                     continue
                 if not self.entry_matches_keywords(entry):
-                    self.logger.debug('Entry does not match keywords; next entry. ({})'.format(title))
+                    self.logger.debug('Entry does not match keywords; next entry. ({})'.format(title.encode('ascii', 'replace')))
                     continue
-                self.logger.debug('Tracking new entry. ({})'.format(title))
+                self.logger.debug('Tracking new entry. ({})'.format(title.encode('ascii', 'replace')))
                 issueFactory.fromEntry(entry)
                 self.set_entry_as_tracked(source_name, entry)
 
