@@ -41,11 +41,11 @@ class RSS2JIRA:
             source = Source(conf['feed_url'])
             issueFactory = IssueFactory(
                 name=conf['name'],
-                url=conf['jira_url'],
-                username=conf['jira_username'],
-                password=conf['jira_password'],
-                projectKey=conf['jira_projectKey'],
-                issuetypeName=conf['jira_issuetypeName'],
+                url=self.conf['jira_url'],
+                username=self.conf['jira_username'],
+                password=self.conf['jira_password'],
+                projectKey=self.conf['jira_projectKey'],
+                issuetypeName=self.conf['jira_issuetypeName'],
             )
             self.source_sets.append((name, source, issueFactory))
 
