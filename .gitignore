@@ -6,4 +6,11 @@
 /share/
 
 !/bin/rss2jira
+!/bin/report
 /rss2jira.conf
+
+*.pyc
+rss2jira.sqlite
+rss2jira.egg-info
+build
+dist
