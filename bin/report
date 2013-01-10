@@ -1,0 +1,66 @@
+#!/usr/bin/env python
+
+import argparse
+import smtplib
+import time
+import yaml
+
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from jira.client import JIRA
+from requests.auth import HTTPBasicAuth
+from dateutil.parser import parse
+
+parser = argparse.ArgumentParser(
+    prog='report',
+)
+parser.add_argument('-c', '--config', help='config file')
+args = parser.parse_args()
+
+
+if args.config:
+    conf_file = open(args.config)
+    conf = yaml.load(conf_file)
+    conf_file.close()
+
+from_email = conf['report_from']
+to_email = conf['report_to']
+
+options = {
+    'server': conf['jira_url'],
+    'basic_auth': {
+        'username': conf['jira_username'],
+        'password': conf['jira_password'],
+    },
+}
+jira = JIRA(options)
+auth_url = options['server'] + '/rest/auth/1/session'
+auth_data = HTTPBasicAuth(options['basic_auth']['username'], options['basic_auth']['password'])
+jira._session.get(auth_url, auth=auth_data)
+
+text = []
+html = ['<html>', '<head></head>', '<body>']
+issues = jira.search_issues('project = {} AND assignee is null AND status not in (Resolved, Closed)'.format(conf['jira_projectKey']))
+for issue in issues:
+    created = parse(issue.fields.created)
+    issue_text = "({}) {}: {}".format(created.strftime('%Y-%m-%d'), issue.key, issue.fields.summary.encode('ascii', 'ignore'))
+    issue_link = "{}/browse/{}".format(conf['jira_url'], issue.key)
+    text.append(issue_text)
+    text.append(issue_link)
+    html.append('<p><a href="{}">{}</a>'.format(issue_link, issue_text))
+html.extend(['</body>', '</html>'])
+
+# Create message container - the correct MIME type is multipart/alternative.
+msg = MIMEMultipart('alternative')
+msg['Subject'] = "{}: Unassigned and Unresolved for {}".format(conf['jira_projectKey'], time.strftime('%Y-%m-%d'))
+msg['From'] = from_email
+msg['To'] = to_email
+
+part1 = MIMEText("\n".join(text), 'plain')
+part2 = MIMEText("\n".join(html), 'html')
+msg.attach(part1)
+msg.attach(part2)
+
+s = smtplib.SMTP(conf['smtp_host'])
+s.sendmail(from_email, to_email, msg.as_string())
+s.quit()
