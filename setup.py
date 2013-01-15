@@ -11,7 +11,7 @@ setup(
     url='https://github.com/nnutter/rss2jira',
     packages=['rss2jira'],
     install_requires=['PyYAML>=3.10', 'feedparser>=5.1.2', 'jira-python>=0.12'],
-    scripts=['bin/rss2jira'],
+    scripts=['bin/rss2jira', 'bin/rss2jira-email-report'],
     include_package_data=True,
     license='BSD',
     keywords=['rss', 'jira', 'rss2jira'],

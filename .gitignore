@@ -6,7 +6,7 @@
 /share/
 
 !/bin/rss2jira
-!/bin/report
+!/bin/rss2jira-email-report
 /rss2jira.conf
 
 *.pyc
