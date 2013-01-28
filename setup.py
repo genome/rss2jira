@@ -4,7 +4,7 @@ from setuptools import setup
 
 setup(
     name='rss2jira',
-    version='0.1.14',
+    version='0.1.15',
     description='Create JIRA issues from RSS entries matching key terms.',
     author='nnutter',
     author_email='iam@nnutter.com',
