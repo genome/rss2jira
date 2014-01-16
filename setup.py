@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name='rss2jira',
@@ -9,7 +9,7 @@ setup(
     author='nnutter',
     author_email='iam@nnutter.com',
     url='https://github.com/nnutter/rss2jira',
-    packages=['rss2jira'],
+    packages=find_packages('rss2jira'),
     install_requires=['PyYAML>=3.10', 'feedparser>=5.1.2', 'jira-python==0.12', 'requests==0.14.2', 'python-dateutil<2'],
     scripts=['bin/rss2jira'],
     include_package_data=True,
@@ -24,4 +24,5 @@ setup(
         'Programming Language :: Python :: 2.7',
         'Topic :: Software Development :: Bug Tracking',
     ],
+    test_suite="test",
 )
