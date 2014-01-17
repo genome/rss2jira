@@ -25,4 +25,5 @@ setup(
         'Topic :: Software Development :: Bug Tracking',
     ],
     test_suite="test",
+    tests_require=['mock', 'nose'],
 )
