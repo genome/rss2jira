@@ -23,7 +23,6 @@ class RssReader(object):
                     self.feed_url))
             raise
 
-
     def get_entries(self):
         entries = []
         for e in self._fetch_all_entries():
