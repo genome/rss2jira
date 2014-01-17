@@ -83,14 +83,6 @@ def configure_logging(args):
     if args.daemon:
         logging.captureWarnings(True)
 
-
-class MockJiraWrapper(object):
-    def __init__(self, *args, **kwargs):
-        print("Create jira wrapper ({}, {})".format(args, kwargs))
-
-    def create_issue(self, entry):
-        print("Create issue: {}".format(entry.id))
-
 def main():
     args = parse_args()
     configure_logging(args)
@@ -101,7 +93,7 @@ def main():
         storage.clear()
 
     binding_factory = BindingFactory(app_config, storage, RssReader,
-            MockJiraWrapper)
+            JiraWrapper)
 
     main_loop = MainLoop(app_config, binding_factory, args.sleep,
             stop_condition=lambda: False)
