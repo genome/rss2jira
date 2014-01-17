@@ -48,7 +48,13 @@ class Binding(object):
 
     def pump(self):
         self.logger.info("Fetching entries from {}".format(self.name))
-        entries = self.rss_reader.get_entries()
+        try:
+            entries = self.rss_reader.get_entries()
+        except Exception as ex:
+            self.logger.error("{} consecutive failure(s) fetching {}".format(
+                    self.rss_reader.consecutive_failures, self.name))
+            return
+
         new_entries = []
         for e in entries:
             if e.id not in self.tracked_entries:
