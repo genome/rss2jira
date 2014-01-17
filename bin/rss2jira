@@ -103,7 +103,8 @@ def main():
     binding_factory = BindingFactory(app_config, storage, RssReader,
             MockJiraWrapper)
 
-    main_loop = MainLoop(app_config, binding_factory, args.sleep)
+    main_loop = MainLoop(app_config, binding_factory, args.sleep,
+            stop_condition=lambda: False)
     main_loop.run()
 
 if __name__ == "__main__":
