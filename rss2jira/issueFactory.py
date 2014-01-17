@@ -4,7 +4,7 @@ from jira.client import JIRA
 from pprint import pformat
 
 
-class IssueFactory:
+class JiraWrapper(object):
 
     def __init__(self, name, url, username, password, projectKey, issuetypeName):
         options = {
@@ -27,11 +27,10 @@ class IssueFactory:
         auth_data = HTTPBasicAuth(username, password)
         self.jira._session.get(auth_url, auth=auth_data)
 
-    def fromEntry(self, entry):
-        fields = {}
-        fields['project'] = {'key': self.projectKey}
-        fields['summary'] = entry.title
-        fields['description'] = "Go to {} ({}).".format(self.name, entry.link)
-        fields['issuetype'] = {'name': self.issuetypeName}
+    def create_issue(self, entry):
+        fields = {'project': {'key': self.projectKey}, 'summary': entry.title,
+                'description': "Go to {} ({}).".format(self.name, entry.link),
+                'issuetype': {'name': self.issuetypeName}}
         logging.debug(pformat(fields))
         return self.jira.create_issue(fields=fields)
+
