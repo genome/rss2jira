@@ -25,14 +25,30 @@ class TestTrackedEntries(unittest.TestCase):
 
     def test_commit(self):
         with NamedTemporaryFile() as temp_file:
-            db = Sqlite3TrackedEntries(temp_file.name)
-            db.add("one", "two")
+            with Sqlite3TrackedEntries(temp_file.name) as db:
+                db.add("one", "two")
 
             # Reopen the same db to see that changes are committed
-            db = Sqlite3TrackedEntries(temp_file.name)
-            self.assertTrue(db.contains("one", "two"))
+            with Sqlite3TrackedEntries(temp_file.name) as db:
+                db = Sqlite3TrackedEntries(temp_file.name)
+                self.assertTrue(db.contains("one", "two"))
 
-            # Make sure clear is persisted
-            db.clear()
-            db = Sqlite3TrackedEntries(temp_file.name)
-            self.assertFalse(db.contains("one", "two"))
+                # Make sure clear is persisted
+                db.clear()
+
+            with Sqlite3TrackedEntries(temp_file.name) as db:
+                db = Sqlite3TrackedEntries(temp_file.name)
+                self.assertFalse(db.contains("one", "two"))
+
+    def test_source_entries(self):
+        view_a = self.tracked_entries.source_view("source a")
+        view_b = self.tracked_entries.source_view("source b")
+
+        view_a.add(1)
+        self.assertTrue(1 in view_a)
+
+        view_b.add(2)
+        self.assertTrue(2 in view_b)
+
+        self.assertFalse(2 in view_a)
+        self.assertFalse(1 in view_b)
