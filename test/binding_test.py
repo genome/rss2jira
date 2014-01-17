@@ -2,8 +2,10 @@ from rss2jira.binding import Binding, BindingFactory
 from rss2jira.trackedentries import Sqlite3TrackedEntries
 from rss2jira.rssreader import RssReader
 
+import re
 import mock
 import unittest
+from testhelpers import RegexMatcher
 
 def _make_entry(title):
     entry = mock.Mock()
@@ -27,10 +29,11 @@ def _make_config_source(n, extra_keywords=None):
 
     return rv
 
-def mock_factory(*args, **kwargs):
+def mock_issue_creator(*args, **kwargs):
     rv = mock.Mock()
     rv(*args, **kwargs)
     return rv
+
 
 class TestBindingFactory(unittest.TestCase):
     def setUp(self):
@@ -47,7 +50,7 @@ class TestBindingFactory(unittest.TestCase):
         self.tracked_entries = Sqlite3TrackedEntries(":memory:")
         self.factory = BindingFactory(self.config, self.tracked_entries,
                 rss_reader_class=RssReader,
-                issue_creator_class=mock_factory)
+                issue_creator_class=mock_issue_creator)
 
     def test_create(self):
         bindings = [self.factory.create(x) for x in self.config['sources']]
@@ -88,29 +91,36 @@ class TestBindingFactory(unittest.TestCase):
 
 class TestBinding(unittest.TestCase):
     def setUp(self):
+        self.name = "test_feed"
         self.tracked_entries = Sqlite3TrackedEntries(":memory:")
         self.reader = mock.Mock()
         self.entries = [_make_entry(x) for x in xrange(5)]
         self.reader.get_entries = mock.Mock(return_value=self.entries)
         self.issue_creator = mock.Mock()
+        self.binding = Binding(self.name, self.reader, self.issue_creator,
+                self.tracked_entries.source_view(self.name))
 
-    def test_reader(self):
-        name = "test"
-        tracked_entries = self.tracked_entries.source_view(name)
-        binding = Binding(name, self.reader, self.issue_creator, tracked_entries)
-
+    def test_pump(self):
         # Make sure new issues get created
-        binding.pump()
+        self.binding.pump()
         expected_calls = [mock.call(x) for x in self.entries]
         self.issue_creator.create_issue.assert_has_calls(expected_calls)
 
         self.issue_creator.create_issue.reset_mock()
 
         # Make sure they don't get created again
-        binding.pump()
+        self.binding.pump()
         self.assertFalse(self.issue_creator.create_issue.called)
 
         # Clear the database and see that now the issues will be recreated
         self.tracked_entries.clear()
-        binding.pump()
+        self.binding.pump()
         self.issue_creator.create_issue.assert_has_calls(expected_calls)
+
+    def test_reader_exception_logging(self):
+        self.binding.logger.error = mock.Mock()
+        self.reader.consecutive_failures = 1
+        self.reader.get_entries.side_effect = RuntimeError("boom")
+        self.binding.pump()
+        expected_matcher = RegexMatcher("1 consecutive fail")
+        self.binding.logger.error.assert_called_once_with(expected_matcher)
