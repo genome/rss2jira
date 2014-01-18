@@ -42,13 +42,10 @@ _FEED_XML = """
 
 class TestRssReader(unittest.TestCase):
     def setUp(self):
-        self.input_file = tempfile.NamedTemporaryFile(delete=False)
+        self.input_file = tempfile.NamedTemporaryFile()
         self.url = "file://{}".format(self.input_file.name)
         self.input_file.write(_FEED_XML)
         self.input_file.flush()
-
-    def tearDown(self):
-        os.unlink(self.input_file.name)
 
     def test_reader(self):
         reader = RssReader(self.url)
