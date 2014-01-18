@@ -93,3 +93,11 @@ class TestRssReader(unittest.TestCase):
         self.assertEqual(0, reader.consecutive_failures)
 
         sock.close()
+
+    def test_bad_feed_data(self):
+        bad_file = tempfile.NamedTemporaryFile()
+        bad_file.write("Ceci n'est pas un flux RSS")
+        bad_file.flush()
+        url = "file://{}".format(bad_file.name)
+        reader = RssReader(url)
+        self.assertRaises(Exception, reader.get_entries)
