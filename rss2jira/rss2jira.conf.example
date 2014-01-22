@@ -1,4 +1,5 @@
 db_path: 'rss2jira.db'
+socket_timeout_sec: 20
 sources:
     - name: 'BioStars'
       feed_url: 'http://biostars.org/feeds/latest'
