@@ -1,4 +1,4 @@
-__version__ = '0.1.19'
+__version__ = '0.1.20'
 
 from trackedentries import Sqlite3TrackedEntries
 from binding import BindingFactory
