@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='rss2jira',
-    version='0.1.18',
+    version='0.1.19',
     description='Create JIRA issues from RSS entries matching key terms.',
     author='nnutter',
     author_email='iam@nnutter.com',
