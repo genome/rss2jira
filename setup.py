@@ -9,7 +9,7 @@ setup(
     author='nnutter',
     author_email='iam@nnutter.com',
     url='https://github.com/nnutter/rss2jira',
-    packages=find_packages('rss2jira'),
+    packages=['rss2jira']
     install_requires=['PyYAML>=3.10', 'feedparser>=5.1.2', 'jira-python==0.12', 'requests==0.14.2', 'python-dateutil<2'],
     scripts=['bin/rss2jira'],
     include_package_data=True,
