@@ -3,6 +3,7 @@ import tempfile
 import os
 import re
 import unittest
+import urllib2
 import socket
 
 _FEED_XML = """
@@ -80,9 +81,9 @@ class TestRssReader(unittest.TestCase):
         reader = RssReader("http://{}:{}/".format(host, port), timeout=0.01)
 
         self.assertEqual(0, reader.consecutive_failures)
-        self.assertRaises(socket.timeout, reader.get_entries)
+        self.assertSocketTimeout(reader.get_entries)
         self.assertEqual(1, reader.consecutive_failures)
-        self.assertRaises(socket.timeout, reader.get_entries)
+        self.assertSocketTimeout(reader.get_entries)
         self.assertEqual(2, reader.consecutive_failures)
 
         # point the reader at a valid file to test that consecutive_failures
@@ -101,3 +102,16 @@ class TestRssReader(unittest.TestCase):
         url = "file://{}".format(bad_file.name)
         reader = RssReader(url)
         self.assertRaises(Exception, reader.get_entries)
+
+    def assertSocketTimeout(self, callable):
+        try:
+            callable()
+        except socket.timeout as ex:
+            return
+        except urllib2.URLError as ex:
+            if type(ex.reason) == socket.timeout:
+                return
+            else:
+                raise
+
+        raise AssertionError("callable did not raise a socket timeout exception")
