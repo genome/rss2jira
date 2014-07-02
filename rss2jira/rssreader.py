@@ -25,7 +25,10 @@ class RssReader(object):
 
     def _fetch_all_entries(self):
         try:
-            stream = urllib2.urlopen(self.feed_url, timeout=self.timeout)
+            request = urllib2.Request(self.feed_url)
+            request.add_header("User-Agent", "Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Firefox/31.0")
+            opener = urllib2.build_opener()
+            stream = opener.open(request, timeout=self.timeout)
             feed = validate_feed(feedparser.parse(stream))
             self.consecutive_failures = 0
             return feed.entries
