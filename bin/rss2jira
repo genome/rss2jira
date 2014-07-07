@@ -59,7 +59,7 @@ def configure_logging(args):
 
     if args.log:
         if args.daemon:
-            fh = logging.WatchedFileHandler(args.log)
+            fh = logging.handlers.WatchedFileHandler(args.log)
         else:
             fh = logging.handlers.TimedRotatingFileHandler(args.log, backupCount=5, when='d', interval=7)
         fh.setFormatter(formatter)
