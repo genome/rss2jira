@@ -1,4 +1,4 @@
-PyYAML==3.10
+PyYAML==5.1
 feedparser==5.1.2
 ipython==0.13
 jira-python==0.12
